@@ -1,6 +1,10 @@
+import LoginLeftSide from "../components/LoginLeftSide"
+
 const LoginLanding = () => {
   return (
-    <div>LoginLanding</div>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <LoginLeftSide />
+    </div>
   )
 }
 
