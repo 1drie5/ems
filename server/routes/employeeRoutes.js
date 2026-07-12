@@ -1,10 +1,13 @@
 import { Router } from 'express'
-import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '../controllers/employeeController'
+import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '../controllers/employeeController.js'
+import { protect, protectAdmin } from '../middleware/auth.js'
 
 
-const employeeRouter = Router()
+const employeesRouter = Router()
 
-employeeRouter.get('/', getEmployees)
-employeeRouter.post('/', createEmployee)
-employeeRouter.put('/:id', updateEmployee)
-employeeRouter.delete('/:id', deleteEmployee)
+employeesRouter.get('/', protect, protectAdmin, getEmployees)
+employeesRouter.post('/', protect, protectAdmin, createEmployee)
+employeesRouter.put('/:id', protect, protectAdmin, updateEmployee)
+employeesRouter.delete('/:id', protect, protectAdmin, deleteEmployee)
+
+export default employeesRouter
