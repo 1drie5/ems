@@ -8,8 +8,7 @@ export const inngest = new Inngest({ id: "fsmern-ems" });
 
 // Auto check-out for employees
 const autoCheckOut = inngest.createFunction(
-  { id: "auto-check-out" }, 
-  { event: "employee/check-out" },
+  { id: "auto-check-out", triggers: [{ event: "employee/check-out" }]}, 
   async ({ event, step }) => {
     const {employeeId, attendanceId} = event.data;
     
@@ -42,8 +41,7 @@ const autoCheckOut = inngest.createFunction(
 
 // Send Email to admin, If admin doesn't take action on leave application with in 24 hours
 const leaveApplicationReminder = inngest.createFunction(
-  { id: "leave-application-reminder" }, 
-  { event: "leave/pending" },
+  { id: "leave-application-reminder", triggers: [{ event: "leave/pending" }]}, 
   async ({ event, step }) => {
     const { leaveApplicationId } = event.data;
     
@@ -63,8 +61,7 @@ const leaveApplicationReminder = inngest.createFunction(
 
 // Cron: Check attendance at 11:30 AM IST (06:00 UTC) and email absent employees
 const attendanceReminderCron = inngest.createFunction(
-  { id: "attendance-reminder-cron" }, 
-  { cron: "0 0 6 * * *" }, // 06:00 UTC = 11:30 AM IST
+  { id: "attendance-reminder-cron", triggers:[{ cron: "0 0 6 * * *" }]}, // 06:00 UTC = 11:30 AM IST
   async ({ step }) => {
     // Step 1: Get today's date range (IST)
     const today = await step.run("get-today-date", () => {
