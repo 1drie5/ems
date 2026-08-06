@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { dummyProfileData } from '../assets/assets'
-import {MenuIcon, UserIcon, XIcon, LayoutGridIcon, CalendarIcon, FileTextIcon, DollarSignIcon, SettingsIcon, ChevronRightIcon, LogOutIcon} from 'lucide-react'
+import {MenuIcon, UserIcon, XIcon, LayoutGridIcon, CalendarIcon, FileTextIcon, DollarSignIcon, SettingsIcon, ChevronRightIcon, LogOutIcon, Loader2} from 'lucide-react'
+import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
 const Sidebar = () => {
+
+    const {user, loading, logout} = useAuth()
+
     const { pathname } = useLocation()
     const [userName, setUserName] = useState('')
     const [mobileOpen, setMobileOpen] = useState(false)
     useEffect(() => {
-        setUserName(dummyProfileData.firstName + ' ' + dummyProfileData.lastName)
+        api.get("/profile").then(({data})=>{
+            if(data.firstName) setUserName(`${data.firstName} ${data.lastName || ""}`.trim())
+        })
     },[])
 
     // Close mobile sidebar on route change
@@ -15,7 +22,7 @@ const Sidebar = () => {
         setMobileOpen(false)
     },[pathname])
 
-    const role = "" || "EMPLOYEE"
+    const role = user?.role
 
     const navItems =[
         {name: "Dashboard", href: "/dashboard", icon: LayoutGridIcon},
@@ -28,6 +35,7 @@ const Sidebar = () => {
     ]
 
     const handleLogout = () => {
+        logout()
         window.location.href = "/login"
     }
 
@@ -74,7 +82,13 @@ const Sidebar = () => {
 
             {/* Navigation List */}
             <div className='flex-1 px-3 space-y-0.5 overflow-y-auto'>
-                {navItems.map((item)=>{
+                {loading ? (
+                    <div className='px-3 py-3 flex items-center gap-2 text-slate-500'>
+                        <Loader2 className='animate-spin w-4 h-4' />
+                        <span className='text-sm'>Loading...</span>
+                    </div>
+                ) : (
+                    navItems.map((item)=>{
                     const isActive = pathname.startsWith(item.href)
                     return (
                         <Link key={item.name} to={item.href} className={`group flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transiiton-all duration-150 relative ${isActive ? "bg-indigo-500/12 text-indigo-300" : "text-slate-300 hover:text-white hover:bg-white/4"}`}>
@@ -83,8 +97,10 @@ const Sidebar = () => {
                             <span className='flex-1'>{item.name}</span>
                             {isActive && <ChevronRightIcon className='w-3.5 h-3.5 text-indigo-500/50'/>}
                         </Link>
-                    )
-                })}
+                        )
+                    })
+                )}
+                
 
             </div>
 
