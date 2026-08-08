@@ -3,18 +3,24 @@ import { useParams } from 'react-router-dom'
 import { dummyPayslipData } from '../assets/assets'
 import Loading from '../components/Loading'
 import { format } from 'date-fns'
+import toast from 'react-hot-toast'
+import api from "../api/axios"
 
 const PrintPaySlip = () => {
   const {id} = useParams()
   const [payslip, setPayslip] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(()=>{
-    setPayslip(dummyPayslipData.find((slip) => (slip._id || slip.id) === id))
-    setTimeout(()=>{
-      setLoading(false)
-    },1000)
-  },[id])
+  useEffect(() => {
+  api
+    .get(`/payslips/${id}`)
+    .then((res) => setPayslip(res.data.result))
+    .catch((error) => {
+      console.error(error)
+      toast.error(error.response?.data?.error || error.message)
+    })
+    .finally(() => setLoading(false))
+  }, [id])
 
   if(loading) return <Loading />
   if(!payslip) return <p className='text-center py-12 text-slate-400'>Payslip not found</p>
