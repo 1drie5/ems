@@ -10,14 +10,20 @@ const transporter = createTransport({
   },
 });
 
-const sendEmail = async ({to, subject, body}) => {
-    const response = await transporter.sendEmail({
-        from: process.env.SENDER_EMAIL,
-        to,
-        subject,
-        html: body
-    })
-    return response
-}
+const sendEmail = async ({ to, subject, body }) => {
+  try {
+    const response = await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to,
+      subject,
+      html: body,
+    });
+    
+    return response;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+};
 
-export default sendEmail
+export default sendEmail;
