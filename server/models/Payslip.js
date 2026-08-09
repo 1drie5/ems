@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const payslipSchema = new mongoose.Schema({
-    employeeId: {type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+    employeeId: {type: mongoose.Schema.Types.ObjectId, ref: "Employee", required: true, unique: true },
     month: { type: Number, required: true },
     year: { type: Number, required: true },
     basicSalary: { type: Number, required: true },
